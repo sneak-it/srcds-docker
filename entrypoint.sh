@@ -1,4 +1,8 @@
 #!/bin/bash
+cd /home/container
+sleep 1
+# Make internal Docker IP address available to processes.
+export INTERNAL_IP=`ip route get 1 | awk '{print $NF;exit}'`
 
 set -e
 
@@ -140,7 +144,7 @@ startServer() {
   fi
 
   if [ -n "$CSGO_WS_API_KEY" ]; then
-    optionalParameters+=" -authkey $CSGO_WS_API_KEY +host_workshop_map 1326959512"
+    optionalParameters+=" -authkey $CSGO_WS_API_KEY"
   else
     echo '> Warning: Environment variable "CSGO_WS_API_KEY" is not set, so you need to mount maps and set environment variable "CSGO_CUSTOM_CONFIGS_DIR"'
   fi
@@ -159,13 +163,13 @@ startServer() {
       -game csgo \
       -console \
       -norestart \
-      -usercon \
+      -usercon \	
       -nobreakpad \
       +ip "${CSGO_IP-0.0.0.0}" \
       -port "${CSGO_PORT-27015}" \
       -tickrate "${CSGO_TICKRATE-128}" \
       -maxplayers_override "${CSGO_MAX_PLAYERS-16}" \
-      +game_type 3 \
+      +game_type 0 \
       +game_mode 0 \
       +map de_mirage \
       $optionalParameters \
@@ -205,12 +209,6 @@ fi
 #    downloadMaps
 #  fi
 #fi
-
-if [ "$MAPCHOOSER" == "yes" ]; then
-  mv $CSGO_DIR/addons/sourcemod/plugins/disabled/mapchooser.smx $CSGO_DIR/addons/sourcemod/plugins/
-  mv $CSGO_DIR/addons/sourcemod/plugins/disabled/nominations.smx $CSGO_DIR/addons/sourcemod/plugins/
-  mv $CSGO_DIR/addons/sourcemod/plugins/disabled/rockthevote.smx $CSGO_DIR/addons/sourcemod/plugins/
-fi
 
 applyCustomConfigs
 
