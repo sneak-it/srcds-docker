@@ -78,20 +78,6 @@ installKZTimer() {
     echo '> Done'
 }
 
-#downloadMaps() {
-#    echo "> Downloading maps ..."
-#    cd /home/csgo/server/csgo/maps/workshop
-#    /bin/bash /home/csgo/mapsync.sh
-#    cd /home/csgo/server/csgo
-#}
-
-#downloadMapsKZT() {
-#    echo "> Downloading maps ..."
-#    cd /home/csgo/server/csgo/maps/workshop
-#    /bin/bash /home/csgo/mapsynckzt.sh
-#    cd /home/csgo/server/csgo
-#}
-
 installServer() {
   echo '> Installing server ...'
 
@@ -155,16 +141,13 @@ startServer() {
     echo '> Warning: Environment variable "KZ_API_KEY" is not set, so you need to mount globalrecords.cfg and set environment variable "CSGO_CUSTOM_CONFIGS_DIR" if you intend to make this server "global"'
   fi
 
-  #if [ "$DLMAPS" == "yes" ]; then
-  #  optionalParameters+=" -nowatchdog"
-  #fi
-
   $SERVER_DIR/srcds_run \
       -game csgo \
       -console \
       -norestart \
-      -usercon \	
+      -usercon \
       -nobreakpad \
+      -nowatchdog \
       +ip "${CSGO_IP-0.0.0.0}" \
       -port "${CSGO_PORT-27015}" \
       -tickrate "${CSGO_TICKRATE-128}" \
@@ -201,14 +184,6 @@ if [ "$TIMER" == "kztimer" ]; then
 else
   installGOKZ
 fi
-
-#if [ "$DLMAPS" == "yes" ]; then
-#  if [ "$TIMER" == "kztimer" ]; then
-#    downloadMapsKZT
-#  else
-#    downloadMaps
-#  fi
-#fi
 
 applyCustomConfigs
 
